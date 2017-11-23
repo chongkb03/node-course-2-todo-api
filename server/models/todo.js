@@ -3,8 +3,7 @@ var mongoose = require('mongoose');
 var Todo = mongoose.model('Todo', {
   text: {
     type: String,
-  //default: 'hello default',
-  required: true,
+    required: true,
     minlength: 1,
     trim: true
   },
@@ -19,4 +18,3 @@ var Todo = mongoose.model('Todo', {
 });
 
 module.exports = {Todo};
-//module.exports.Todo = Todo;
