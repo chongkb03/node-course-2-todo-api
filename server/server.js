@@ -9,6 +9,7 @@ var app = express();
 
 app.use(bodyParser.json());
 
+// To post data to server
 app.post('/todos', (req, res) => {
   var todo = new Todo({
     text: req.body.text
@@ -19,6 +20,16 @@ app.post('/todos', (req, res) => {
   }, (e) => {
     res.status(400).send(e);
   });
+});
+
+app.get('/todos', (req, res) => {
+  Todo.find().then((t)=>{
+res.send({t})
+
+  },(e)=>{
+  res.status(400).send(e);
+  })
+
 });
 
 app.listen(3000, () => {
