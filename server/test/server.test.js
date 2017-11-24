@@ -3,10 +3,13 @@ const request = require('supertest');
 
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
+const {ObjectID} = require('mongodb');
 
 const todos = [{
+  _id: new ObjectID(),
   text: 'First test todo'
 }, {
+    _id: new ObjectID(),
   text: 'Second test todo'
 }];
 
@@ -16,6 +19,8 @@ beforeEach((done) => {
   }).then(() => done());
 });
 
+
+// To test POST
 describe('POST /todos', () => {
   it('should create a new todo', (done) => {
     var text = 'Test todo text';
@@ -58,6 +63,8 @@ describe('POST /todos', () => {
   });
 });
 
+//To test GET without parameters
+
 describe('GET /todos', () => {
   it('should get all todos', (done) => {
     request(app)
@@ -69,3 +76,41 @@ describe('GET /todos', () => {
       .end(done);
   });
 });
+
+
+
+//To test GET parameters
+
+describe('GET /todos/:id', () => {
+  it('should return todo doc base on parameter', (done) => {
+    request(app)
+      .get(`/todos/${todos[0]._id.toHexString()}` )
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.text).toBe(todos[0].text);
+      })
+      .end(done);
+  });
+
+
+//To test non record found
+  it('should return 404 if rec not found', (done) => {
+    var hexId = new ObjectID().toHexString();
+
+    request(app)
+      .get(`/todos/${hexId}` )
+      .expect(404)
+      .expect((res) => {
+        expect(res.body.text).toBe('Cannot find rec');
+      })
+      .end(done);
+  });
+
+  //To test non valid id
+    it('should return 404 if id not valid', (done) => {
+      request(app)
+        .get('/todos/123abc')
+        .expect(404)
+        .end(done);
+      });
+  });
