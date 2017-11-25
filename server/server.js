@@ -1,23 +1,4 @@
-require('./config/config.js');
-
-var env = process.env.NODE_ENV || 'development';
-console.log('env ****'+ env +'**');
-
-if (env.trim() === 'development')
-   {
-   process.env.PORT =  3000;
-   process.env.MONGODB_URI = 'mongodb://localhost:27017/TodoApp';
-   console.log('MONGODB (DEVT) ****', process.env.MONGODB_URI);
-
-   }
-else
-if (env.trim() === 'test')
-  {
-  process.env.PORT =  3000;
-  process.env.MONGODB_URI = 'mongodb://localhost:27017/TodoAppTest';
-  console.log('MONGODB (TEST)****', process.env.MONGODB_URI);
-
-  }
+require('./config/config');
 
 const _ = require('lodash');
 const express = require('express');
@@ -27,9 +8,9 @@ const {ObjectID} = require('mongodb');
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
-
+var {authenicate} = require('./middleware/authenicate');
 var app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 app.use(bodyParser.json());
 
@@ -113,6 +94,29 @@ app.patch('/todos/:id', (req, res) => {
   }).catch((e) => {
     res.status(400).send();
   })
+});
+
+// Register Users
+app.post('/users', (req, res) => {
+  var body = _.pick(req.body, ['email', 'password']);
+  var user = new User(body);
+
+  user.save().then(() => {
+    //1st return to ensure that then() is called with parameter token passed
+     return user.generateAuthToken();
+  }).then((token) => {
+    res.header('x-auth', token).send(user);
+  }).catch((e) => {
+    res.status(400).send(e);
+  })
+});
+
+
+//Authenicate before proceeding to access users info.
+
+
+app.get('/users/me',authenicate, (req,res) =>{
+  res.send (req.user);
 });
 
 app.listen(port, () => {
