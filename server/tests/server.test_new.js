@@ -5,52 +5,10 @@ const {ObjectID} = require('mongodb');
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 const {User} = require('./../models/user');
-const jwt = require('jsonwebtoken');
+const {todos, populateTodos, users, populateUsers} = require('./seed/seed');
 
-const userOneId = new ObjectID();
-const userTwoId = new ObjectID();
-
-
-const users = [{
-  _id: userOneId,
-  email: 'chong@example1.com',
-  password: 'userOnePass',
-  tokens: [{
-    access: 'auth',
-    token: jwt.sign({_id: userOneId, access:'auth'},'abc123').toString()
-  }]
-}, {_id: userTwoId,
-email: 'chong@example2.com',
-password: 'userTwoPass'
-}];
-
-const todos = [{
-  _id: new ObjectID(),
-  text: 'First test todo'
-}, {
-  _id: new ObjectID(),
-  text: 'Second test todo',
-  completed: true,
-  completedAt: 333
-}];
-
-
-beforeEach((done) => {
-  User.remove({}).then(() => {
-    var userOne = new User(users[0]).save();
-    var userTwo = new User(users[1]).save();
-    return Promise.all([userOne,userTwo]);
-
-  }).then(() => done());
-});
-
-beforeEach((done) => {
-  Todo.remove({}).then(() => {
-    return Todo.insertMany(todos);
-  }).then(() => done());
-});
-
-
+beforeEach(populateUsers);
+beforeEach(populateTodos);
 
 describe('POST /todos', () => {
   it('should create a new todo', (done) => {
@@ -212,8 +170,6 @@ describe('PATCH /todos/:id', () => {
       .end(done);
   });
 });
-
-
 
 describe('GET /users/me', () => {
   it('should return user if authenticated', (done) => {
