@@ -141,7 +141,7 @@ User.findByCredentials(body.email, body.password).then((user)=>{
 
 //Delete user
 app.delete('/users/me/token', authenicate, (req,res) =>{
-  console.log('REQ BODY ', req.user);
+//  console.log('REQ BODY ', req.user);
   req.user.removeToken(req.token).then(()=>{
     res.status(200).send();
     },()=>{res.status(400).send();}
