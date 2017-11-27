@@ -34,6 +34,7 @@ const todos = [{
   completedAt: 333
 }];
 
+// Prepare data before Test
 
 beforeEach((done) => {
   User.remove({}).then(() => {
@@ -52,6 +53,7 @@ beforeEach((done) => {
 
 
 
+// Test Create TODO recs
 describe('POST /todos', () => {
   it('should create a new todo', (done) => {
     var text = 'Test todo text';
@@ -94,6 +96,8 @@ describe('POST /todos', () => {
   });
 });
 
+
+// Test Get TODO recs
 describe('GET /todos', () => {
   it('should get all todos', (done) => {
     request(app)
@@ -106,6 +110,7 @@ describe('GET /todos', () => {
   });
 });
 
+// Test Get TODO rec by id
 describe('GET /todos/:id', () => {
   it('should return todo doc', (done) => {
     request(app)
@@ -134,6 +139,7 @@ describe('GET /todos/:id', () => {
   });
 });
 
+//Test Delete TODO rec by id
 describe('DELETE /todos/:id', () => {
   it('should remove a todo', (done) => {
     var hexId = todos[1]._id.toHexString();
@@ -173,6 +179,8 @@ describe('DELETE /todos/:id', () => {
   });
 });
 
+
+//Test Update TODO rec
 describe('PATCH /todos/:id', () => {
   it('should update the todo', (done) => {
     var hexId = todos[0]._id.toHexString();
@@ -214,7 +222,7 @@ describe('PATCH /todos/:id', () => {
 });
 
 
-
+//Test Get USER rec by token
 describe('GET /users/me', () => {
   it('should return user if authenticated', (done) => {
     request(app)
@@ -239,6 +247,7 @@ describe('GET /users/me', () => {
   });
 });
 
+//Post create USER record
 describe('POST /users', () => {
   it('should create a user', (done) => {
     var email = 'example@example.com';
